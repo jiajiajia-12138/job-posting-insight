@@ -1,0 +1,23 @@
+import pandas as pd
+
+# 1. 读数据
+df = pd.read_csv("data/jd_sample.csv", encoding="utf-8-sig")
+df["jd_text"] = df["jd_text"].str.strip('"')
+
+# 2. 技能关键词标记
+skills = ["SQL", "Python", "统计", "机器学习", "Spark", "ETL", "数据可视化"]
+for s in skills:
+    df[s] = df["jd_text"].str.contains(s, case=False, na=False)
+
+# 3. 输出：每条 JD 命中情况
+print("=== 每条 JD 技能命中 ===")
+print(df[["company"] + skills].to_string(index=False))
+
+# 4. 输出：技能频次
+print("\n=== 技能出现次数 ===")
+print(df[skills].sum().sort_values(ascending=False).to_string())
+
+# 5. 输出：0 命中的 JD（值得人工回看）
+no_hit = df[~df[skills].any(axis=1)]
+print("\n=== 未命中任何关键词的 JD ===")
+print(no_hit[["company", "title"]].to_string(index=False))
