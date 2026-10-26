@@ -21,3 +21,18 @@ print(df[skills].sum().sort_values(ascending=False).to_string())
 no_hit = df[~df[skills].any(axis=1)]
 print("\n=== 未命中任何关键词的 JD ===")
 print(no_hit[["company", "title"]].to_string(index=False))
+
+import os
+
+# 6. 读取 LLM 语义抽取结果并与关键词法对比
+print("\n=== LLM 语义抽取 vs 关键词法 ===")
+llm_file = "data/llm_extract_results.csv"
+if os.path.exists(llm_file):
+    llm_df = pd.read_csv(llm_file)
+    for _, row in llm_df.iterrows():
+        print(f"\n公司: {row['company']}")
+        print(f"关键词命中数: {row['keyword_hits']}")
+        print(f"LLM抽出的技能: {row['llm_extracted_skills']}")
+        print(f"结论: {row['conclusion']}")
+else:
+    print("未找到 LLM 抽取结果文件。")
